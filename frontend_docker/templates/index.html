@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome to the OpenWatherMap Interface</h1>
+<form action="" method="post">
+    <div class="form-group">
+        <label for="cityID">City Name</label>
+        <input type="text" class="form-control" id="cityID" name="city" placeholder="enter city name ..." value="{{
+  request.form.city }}">
+    </div>
+    <div class="form-group">
+        <label for="countryID">Select Country Abbreviation</label>
+        <select class="form-control" id="countryID" aria-describedby="countryHelp" value="{{
+  request.form.country }}" name="country">
+        {% for country in countries %}
+            <option>{{ country }}</option>
+        {% endfor %}
+        </select>
+        <small id="countryHelp" class="form-text text-muted">Select country acronym first!</small>
+    </div>
+    <button type="submit" class="btn btn-dark btn-sm btn-block" value="Search">Search City</button>
+</form>
+<br>
+<p>Click <a href="/logout">here</a> to logout.</p>
+{% endblock %}
