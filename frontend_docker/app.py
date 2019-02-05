@@ -4,7 +4,7 @@ import urllib.request, json
 
 app = Flask(__name__)
 
-app.secret_key = "secret key"
+app.secret_key = "\xd9w\xb5\xa1\x13\x82\xadC\xa2J\x81*e\xc6\x1c8\x8b\x92S3\r\x7fAl"
 
 def login_required(f):
     @wraps(f)
