@@ -6,13 +6,14 @@ from flask import Flask, render_template, redirect, url_for, request, session, f
 from functools import wraps
 import os
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_bcrypt import Bcrypt
 # from pytz import timezone
 # import tzlocal
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app) # password hashing
 
-# set environmental variable to developemtn or production class
+# set environmental variable to development or production class
 app.config.from_object(os.environ['APP_MODE'])
 
 

@@ -1,4 +1,7 @@
-from app import db
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
+
+from app import db, bcrypt
 
 
 class WeatherRegistration(db.Model):
@@ -7,11 +10,29 @@ class WeatherRegistration(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String, nullable=False)
     country = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, ForeignKey('users.id'))
 
-    def __init__(self, id, city, country):
+    def __init__(self, id, city, country, user_id):
         self.id = id
         self.city = city
         self.country = country
+        self.user_id = user_id
 
     def __repr__(self):
-        return '{} - {}'.format(self.id, self.city)
+        return '{} - {} - {}'.format(self.id, self.city, self.user)
+
+
+class User(db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, nullable=False)
+    password = db.Column(db.String)
+    registrations = relationship("WeatherRegistration", backref="user")
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = bcrypt.generate_password_hash(password)
+
+    def __repr__(self):
+        return '{}'.format(self.username)
