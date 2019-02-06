@@ -20,5 +20,17 @@
     <button type="submit" class="btn btn-dark btn-sm btn-block" value="Search">Search City</button>
 </form>
 <br>
+
+<hr>
+
+<ul class="list-group">
+{% for id in session['city_ids'] %}
+    <li class="list-group-item"><a href="/forecast{{ id[1] }}">{{ id[0]|capitalize }}</a></li>
+{% endfor %}
+</ul>
+
+<br>
+
+
 <p>Click <a href="/logout">here</a> to logout.</p>
 {% endblock %}
