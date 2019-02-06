@@ -1,31 +1,16 @@
 import datetime
 import json
-import os
 import pytz
 import urllib.request
-from flask import Flask, render_template, redirect, url_for, request, session, flash
-from flask_bcrypt import Bcrypt
-from flask_sqlalchemy import SQLAlchemy
+from flask import render_template, redirect, url_for, request, session, flash, Blueprint
 from functools import wraps
+from project import app, db
+from project.models import WeatherRegistration
 
-# from pytz import timezone
-# import tzlocal
-
-app = Flask(__name__)
-bcrypt = Bcrypt(app)  # password hashing
-
-# set environmental variable to development or production class
-app.config.from_object(os.environ['APP_MODE'])
-
-db = SQLAlchemy(app)
-
-# import db schema
-from models import *
-# import blueprints
-from project.users.views import users_blueprint
-
-# register blueprints
-app.register_blueprint(users_blueprint)
+main_blueprint = Blueprint(
+    'main', __name__,
+    template_folder='templates'
+)
 
 
 def datetimefilter(value, format="%A"):
@@ -67,7 +52,7 @@ def login_required(f):
     return wrap
 
 
-@app.route('/', methods=['GET', 'POST'])
+@main_blueprint.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
     '''
@@ -77,8 +62,8 @@ def home():
     '''
 
     # session.clear()
-    registrations = db.session.query(WeatherRegistration).all()
-    print(registrations)
+    # registrations = db.session.query(WeatherRegistration).all()
+    # print(registrations)
 
     if 'city_ids' not in session:
         session['city_ids'] = []
@@ -106,14 +91,14 @@ def home():
                         city_ids.append([request.form['city'], ids['data'][0]['id']])
                     session['city_ids'] = city_ids
 
-                    return redirect(url_for('home'))
+                    return redirect(url_for('main.home'))
             else:
                 error = 'Enter a city name!'
 
     return render_template('index.html', countries=data['data'], error=error)
 
 
-@app.route('/forecast<id>')
+@main_blueprint.route('/forecast<id>')
 @login_required
 def forecast(id):
     '''
@@ -130,7 +115,7 @@ def forecast(id):
     return render_template('forecast.html', data=data)
 
 
-@app.route('/remove<id>')
+@main_blueprint.route('/remove<id>')
 @login_required
 def remove(id):
     '''
@@ -145,10 +130,10 @@ def remove(id):
             session['city_ids'].remove(c)
             session.modified = True
 
-    return redirect(url_for('home'))
+    return redirect(url_for('main.home'))
 
 
-@app.route('/welcome')
+@main_blueprint.route('/welcome')
 def welcome():
     '''
     Generic welcome page.
@@ -156,38 +141,3 @@ def welcome():
     :return: rendered template
     '''
     return render_template('welcome.html')
-
-
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     '''
-#     Login page.
-#     :return:
-#     '''
-#
-#     error = None
-#     if request.method == 'POST':
-#         if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-#             error = 'Invalid Credentials. Please try again.'
-#         else:
-#             session['logged_in'] = True
-#             flash('You were just logged in!')
-#             return redirect(url_for('home'))
-#     return render_template('login.html', error=error)
-
-
-# @app.route('/logout')
-# @login_required
-# def logout():
-#     '''
-#     Logout page.
-#
-#     :return: rendered template
-#     '''
-#     session.pop('logged_in', None)
-#     flash('You were just logged out!')
-#     return redirect(url_for('welcome'))
-
-
-if __name__ == '__main__':
-    app.run()

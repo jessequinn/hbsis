@@ -1,9 +1,4 @@
 from flask import flash, redirect, render_template, request, session, url_for, Blueprint
-from flask_bcrypt import Bcrypt
-
-from app import app
-
-bcrypt = Bcrypt(app)
 from functools import wraps
 
 users_blueprint = Blueprint(
@@ -32,8 +27,8 @@ def login():
             error = 'Invalid Credentials. Please try again.'
         else:
             session['logged_in'] = True
-            flash('You were logged in.')
-            return redirect(url_for('home'))
+            flash('You are logged in.')
+            return redirect(url_for('main.home'))
     return render_template('login.html', error=error)
 
 
@@ -42,4 +37,4 @@ def login():
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out.')
-    return redirect(url_for('welcome'))
+    return redirect(url_for('main.welcome'))

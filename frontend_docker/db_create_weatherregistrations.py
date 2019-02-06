@@ -1,5 +1,5 @@
-from app import db
-from models import WeatherRegistration
+from project import db
+from project.models import WeatherRegistration
 
 # create the database and the db table
 db.create_all()

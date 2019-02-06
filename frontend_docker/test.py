@@ -1,8 +1,7 @@
 import unittest
 
-from app import app
-from app import datetimefilter
-
+from project import app
+from project.main.views import datetimefilter
 
 class TestFrontend(unittest.TestCase):
 
@@ -37,7 +36,7 @@ class TestFrontend(unittest.TestCase):
             '/login',
             data=dict(username='admin', password='admin'),
             follow_redirects=True)
-        self.assertIn(b'You were just logged in!', response.data)
+        self.assertIn(b'You are logged in', response.data)
 
     def test_incorrect_login(self):
         '''
@@ -64,7 +63,7 @@ class TestFrontend(unittest.TestCase):
             data=dict(username='admin', password='admin'),
             follow_redirects=True)
         response = tester.get('/logout', follow_redirects=True)
-        self.assertIn(b'You were just logged out!', response.data)
+        self.assertIn(b'You were logged out', response.data)
 
     def test_main_route_requires_login(self):
         '''
@@ -73,7 +72,7 @@ class TestFrontend(unittest.TestCase):
         :return:
         '''
         tester = app.test_client(self)
-        response  = tester.get('/', follow_redirects=True)
+        response = tester.get('/', follow_redirects=True)
         self.assertTrue(b'Please login' in response.data)
 
     def test_datetimefilter(self):
@@ -83,7 +82,7 @@ class TestFrontend(unittest.TestCase):
         :return:
         '''
 
-        date = datetimefilter(1549465200) # UTC timestamp
+        date = datetimefilter(1549465200)  # UTC timestamp
         self.assertEqual(date, 'Wednesday')
 
     def test_city_registration(self):
@@ -92,7 +91,6 @@ class TestFrontend(unittest.TestCase):
             '/login',
             data=dict(username='admin', password='admin'),
             follow_redirects=True)
-
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
-from app import db, bcrypt
+from project import db, bcrypt
 
 
 class WeatherRegistration(db.Model):

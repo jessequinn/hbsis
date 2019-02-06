@@ -2,7 +2,7 @@ import os
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
-from app import app, db
+from project import app, db
 
 app.config.from_object(os.environ['APP_MODE'])
 migrate = Migrate(app, db)
