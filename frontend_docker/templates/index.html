@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Welcome to the OpenWatherMap Interface</h1>
+<h1>Welcome to the OpenWeatherMap Interface</h1>
 <form action="" method="post">
     <div class="form-group">
         <label for="cityID">City Name</label>
@@ -15,7 +15,7 @@
             <option>{{ country }}</option>
         {% endfor %}
         </select>
-        <small id="countryHelp" class="form-text text-muted">Select country acronym first!</small>
+        <small id="countryHelp" class="form-text text-muted">Do not forget to select the country acronym!</small>
     </div>
     <button type="submit" class="btn btn-dark btn-sm btn-block" value="Search">Search City</button>
 </form>
@@ -25,7 +25,7 @@
 
 <ul class="list-group">
 {% for id in session['city_ids'] %}
-    <li class="list-group-item"><a href="/forecast{{ id[1] }}">{{ id[0]|capitalize }}</a></li>
+    <li class="list-group-item"><a href="/forecast{{ id[1] }}">{{ id[0]|capitalize }}</a> | Remove city from <a href="/remove{{ id[1] }}">registration</a></li>
 {% endfor %}
 </ul>
 

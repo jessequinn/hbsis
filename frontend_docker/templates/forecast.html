@@ -2,6 +2,7 @@
 {% block content %}
 <h1>5 Day Forecast</h1>
 <h3>{{ data['city']['name'] }}</h3>
+<p>Remove city from <a href="/remove{{ data['city']['id'] }}">registration</a><p>
 <hr>
 {% for d in data['list'] %}
 <div class="container">
@@ -11,7 +12,5 @@
 </div>
 <br>
 {% endfor %}
-<p>Remove city from <a href="/remove{{ data['city']['id'] }}">registration</a.</p>
-<br>
 <p>Click <a href="/logout">here</a> to logout. | Return to the previous <a href="/">page</a>.</p>
 {% endblock %}

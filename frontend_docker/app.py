@@ -15,10 +15,10 @@ app.secret_key = "\xd9w\xb5\xa1\x13\x82\xadC\xa2J\x81*e\xc6\x1c8\x8b\x92S3\r\x7f
 
 def datetimefilter(value, format="%A"):
     '''
-    Datetime filter for Jinja.
+    Datetime filter for Jinja. Formats date to US/Eastern from the UTC value.
 
     :param value: input value
-    :param format: format of return date
+    :param format: format of return date. default day of week.
     :return: formatted date
     '''
 
