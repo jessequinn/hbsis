@@ -1,26 +1,32 @@
 import datetime
 import json
+import os
 import pytz
 import urllib.request
 from flask import Flask, render_template, redirect, url_for, request, session, flash
-from functools import wraps
-import os
-from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_sqlalchemy import SQLAlchemy
+from functools import wraps
+
 # from pytz import timezone
 # import tzlocal
 
 app = Flask(__name__)
-bcrypt = Bcrypt(app) # password hashing
+bcrypt = Bcrypt(app)  # password hashing
 
 # set environmental variable to development or production class
 app.config.from_object(os.environ['APP_MODE'])
-
 
 db = SQLAlchemy(app)
 
 # import db schema
 from models import *
+# import blueprints
+from project.users.views import users_blueprint
+
+# register blueprints
+app.register_blueprint(users_blueprint)
+
 
 def datetimefilter(value, format="%A"):
     '''
@@ -56,7 +62,7 @@ def login_required(f):
             return f(*args, **kwargs)
         else:
             flash('You need to login first.')
-            return redirect(url_for('login'))
+            return redirect(url_for('users.login'))
 
     return wrap
 
@@ -152,35 +158,35 @@ def welcome():
     return render_template('welcome.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    '''
-    Login page.
-    :return:
-    '''
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     '''
+#     Login page.
+#     :return:
+#     '''
+#
+#     error = None
+#     if request.method == 'POST':
+#         if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+#             error = 'Invalid Credentials. Please try again.'
+#         else:
+#             session['logged_in'] = True
+#             flash('You were just logged in!')
+#             return redirect(url_for('home'))
+#     return render_template('login.html', error=error)
 
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.'
-        else:
-            session['logged_in'] = True
-            flash('You were just logged in!')
-            return redirect(url_for('home'))
-    return render_template('login.html', error=error)
 
-
-@app.route('/logout')
-@login_required
-def logout():
-    '''
-    Logout page.
-
-    :return: rendered template
-    '''
-    session.pop('logged_in', None)
-    flash('You were just logged out!')
-    return redirect(url_for('welcome'))
+# @app.route('/logout')
+# @login_required
+# def logout():
+#     '''
+#     Logout page.
+#
+#     :return: rendered template
+#     '''
+#     session.pop('logged_in', None)
+#     flash('You were just logged out!')
+#     return redirect(url_for('welcome'))
 
 
 if __name__ == '__main__':

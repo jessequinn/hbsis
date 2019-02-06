@@ -12,11 +12,6 @@ export FLASK_ENV=development
 flask run
 ```
 
-````bash
-export APP_MODE='config.DevelopmentConfig'
-python app.py
-````
-
 To prepare container for Docker
 ```bash
 docker build -t backend_docker .
@@ -39,7 +34,14 @@ password: docker
 docker build -t postgresdocker .
 
 docker run -dp 5432:5432 postgresdocker 
+```
 
+Flask (Frontend):
+
+set the os environment variables
+
+```bash
 export APP_MODE='config.DevelopmentConfig'
-export DATABASE_URL='postgresql://localhost/openweather'
+export DATABASE_URI='postgresql://docker:docker@localhost/openweather'
+python app.py
 ```
