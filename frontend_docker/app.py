@@ -4,14 +4,22 @@ import pytz
 import urllib.request
 from flask import Flask, render_template, redirect, url_for, request, session, flash
 from functools import wraps
+import os
+from flask_sqlalchemy import SQLAlchemy
 
 # from pytz import timezone
 # import tzlocal
 
 app = Flask(__name__)
 
-app.secret_key = "\xd9w\xb5\xa1\x13\x82\xadC\xa2J\x81*e\xc6\x1c8\x8b\x92S3\r\x7fAl"
+# set environmental variable to developemtn or production class
+app.config.from_object(os.environ['APP_MODE'])
 
+
+db = SQLAlchemy(app)
+
+# import db schema
+from models import *
 
 def datetimefilter(value, format="%A"):
     '''
@@ -62,6 +70,8 @@ def home():
     '''
 
     # session.clear()
+    registrations = db.session.query(WeatherRegistration).all()
+    print(registrations)
 
     if 'city_ids' not in session:
         session['city_ids'] = []
@@ -173,4 +183,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port='5000')
+    app.run()
