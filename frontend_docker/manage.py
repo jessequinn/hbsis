@@ -22,7 +22,7 @@ def cov():
     '''
     cov = coverage.coverage(branch=True, include='project/*')
     cov.start()
-    tests = unittest.TestLoader().discover('.')
+    tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
     cov.stop()
     cov.save()
@@ -42,7 +42,7 @@ def test():
     :return:
     '''
 
-    tests = unittest.TestLoader().discover('.')
+    tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
 
 
