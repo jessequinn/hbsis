@@ -377,4 +377,9 @@ dmypy.json
 ### Python Patch ###
 .venv/
 
+backendenv
+backend2env
+frontendenv
+coverage
+
 # End of https://www.gitignore.io/api/node,python,intellij,intellij+all,intellij+iml

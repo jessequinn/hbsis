@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>5 Day Forecast</h1>
+<h4>City Name | {{ data['city']['name'] }}</h4>
+<hr>
+{% for d in data['list'] %}
+<div class="container">
+    <div class="d-inline p-2 bg-success text-white btn-sm">{{ d['dt'] | datetimefilter }}</div>
+    <div class="d-inline p-2 bg-dark text-white">{{ d['weather'][0]['main'] }}</div>
+    <div class="d-inline p-2 bg-warning text-white">{{ d['temp']['day'] }}°C</div>
+</div>
+<br>
+{% endfor %}
+<p>Click <a href="/logout">here</a> to logout. | Return to the previous <a href="/">page</a>.</p>
+{% endblock %}
