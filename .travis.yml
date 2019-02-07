@@ -6,5 +6,4 @@ python:
 # command to install dependencies and run tests
 before_install: cd frontend_docker
 install: "pip install -r requirements.txt"
-before_script: cd frontend_docker
 script: "python manage.py test"
