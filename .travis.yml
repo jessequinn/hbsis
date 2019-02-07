@@ -4,7 +4,8 @@ env:
   - DATABASE_URI="N/A"
 python:
   - "3.6"
-# command to install dependencies
-install: "pip install -r project/requirements.txt"
-# command to run tests
-script: "python project/manage.py test"
+# command to install dependencies and run tests
+script:
+  - "cd project"
+  - "pip install -r requirements.txt"
+  - "python manage.py test"
