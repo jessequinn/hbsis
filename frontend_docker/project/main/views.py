@@ -5,6 +5,7 @@ import urllib.request
 from flask import render_template, redirect, url_for, request, session, flash, Blueprint
 from flask_login import login_required
 from project import app
+from flask_login import current_user
 
 main_blueprint = Blueprint(
     'main', __name__,
@@ -61,7 +62,7 @@ def home():
 
                 if not ids['data']:
                     error = 'No data exists for ' + request.form['city'].capitalize() + '!'
-                    return render_template('index.html', countries=data['data'], error=error)
+                    return render_template('index.html', countries=data['data'], error=error, user=current_user.username)
                 else:
                     city_ids = session['city_ids']
 
@@ -75,7 +76,7 @@ def home():
             else:
                 error = 'Enter a city name!'
 
-    return render_template('index.html', countries=data['data'], error=error)
+    return render_template('index.html', countries=data['data'], error=error, user=current_user.username)
 
 
 @main_blueprint.route('/forecast<id>')

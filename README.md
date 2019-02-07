@@ -43,5 +43,5 @@ set the os environment variables
 ```bash
 export APP_MODE='config.DevelopmentConfig'
 export DATABASE_URI='postgresql://docker:docker@localhost/openweather'
-python app.py
+python manage.py runserver
 ```

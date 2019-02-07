@@ -1,7 +1,8 @@
 from flask import flash, redirect, render_template, request, url_for, Blueprint
 from flask_login import login_user, logout_user, login_required
-from project.users.forms import LoginForm
+from project import db
 from project.models import User, bcrypt
+from project.users.forms import LoginForm, RegisterForm
 
 users_blueprint = Blueprint(
     'users', __name__,
@@ -11,6 +12,11 @@ users_blueprint = Blueprint(
 
 @users_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+    '''
+    Login page.
+
+    :return: rendered template
+    '''
     error = None
     form = LoginForm(request.form)
     if request.method == 'POST':
@@ -28,6 +34,31 @@ def login():
 @users_blueprint.route('/logout')
 @login_required
 def logout():
+    '''
+    Logout routine.
+
+    :return: redirect
+    '''
     logout_user()
     flash('You were logged out.')
-    return redirect(url_for('main.welcome'))
+    return redirect(url_for('main.home'))
+
+
+@users_blueprint.route('/register', methods=['GET', 'POST'])
+def register():
+    '''
+    Registration page.
+
+    :return: rendered template
+    '''
+    form = RegisterForm()
+    if form.validate_on_submit():
+        user = User(
+            username=form.username.data,
+            password=form.password.data
+        )
+        db.session.add(user)
+        db.session.commit()
+        login_user(user) # automatically log user in
+        return redirect(url_for('main.home'))
+    return render_template('register.html', form=form)
