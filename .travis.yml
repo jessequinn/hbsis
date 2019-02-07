@@ -4,12 +4,13 @@ env:
 python:
   - "3.6"
 jobs:
-  - stage: instal requirements
-    script:
-    - pip install -r requirements.txt
-  - stage: start api in background
-    script:
-    - python backend_docker/app.py &
-  - stage: test
-    script:
-    - python frontend_docker/manage.py test
+  include:
+    - stage: instal requirements
+      script:
+      - pip install -r requirements.txt
+    - stage: start api in background
+      script:
+      - python backend_docker/app.py &
+    - stage: test
+      script:
+      - python frontend_docker/manage.py test
