@@ -11,7 +11,7 @@ Backend 1:
 
 Flask serving sqlite based cities. (make_sqlite_db.py) converts city.list.json from openweathermap.org to sqlite.
 
-To start server simply run within the `backend_docker` folder :
+To start the server simply run within the `backend_docker` folder :
 ```bash
 python app.py 
 ```
