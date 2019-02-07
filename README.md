@@ -63,4 +63,4 @@ export DATABASE_URI='postgresql://docker:docker@localhost/openweather'
 python manage.py test
 ```
 
-If there is a problem, please do not hestisitate in contacting me.
+If there is a problem, please do not hesitate in contacting me.
