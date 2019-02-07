@@ -6,6 +6,8 @@ python:
 services:
   - docker
 before_install:
+  - sudo service postgresql stop
+  - while sudo lsof -Pi :5432 -sTCP:LISTEN -t; do sleep 1; done
   - cd backend2_docker; docker build -t postgresdocker .
   - cd backend2_docker; docker run -dp 5432:5432 postgresdocker
 script:
