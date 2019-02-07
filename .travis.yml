@@ -3,6 +3,13 @@ env:
   - APP_MODE="config.TestConfig" DATABASE_URI="N/A"
 python:
   - "3.6"
-# command to install dependencies and run tests
-install: "pip install -r requirements.txt"
-script: "python backend_docker/app.py & || python frontend_docker/manage.py test"
+jobs:
+  - stage: instal requirements
+    script:
+    - pip install -r requirements.txt
+  - stage: start api
+    script:
+    - python backend_docker/app.py &
+  - stage: test
+    script:
+    - python frontend_docker/manage.py test
