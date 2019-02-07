@@ -4,9 +4,5 @@ env:
 python:
   - "3.6"
 # command to install dependencies and run tests
-before_install: cd frontend_docker
 install: "pip install -r requirements.txt"
-before_script: cd ../backend_docker
-script: "python app.py"
-
-#script: "python manage.py test"
+script: "python backend_docker/app.py & || python frontend_docker/manage.py test"
