@@ -5,11 +5,11 @@ from wtforms.validators import DataRequired, EqualTo, Length
 
 class LoginForm(Form):
     username = StringField(
-        'Username',
+        'username',
         validators=[DataRequired()]
     )
     password = PasswordField(
-        'Password',
+        'password',
         validators=[DataRequired()]
     )
 
@@ -24,7 +24,7 @@ class RegisterForm(Form):
         validators=[DataRequired(), Length(min=6, max=25)]
     )
     confirm = PasswordField(
-        'Repeat password',
+        'repeat password',
         validators=[
             DataRequired(), EqualTo('password', message='Passwords must match.')
         ]

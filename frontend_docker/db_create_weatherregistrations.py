@@ -5,7 +5,7 @@ from project.models import WeatherRegistration
 db.create_all()
 
 # insert data
-db.session.add(WeatherRegistration(1234, 'Toronto', 'Canada', 1))
+db.session.add(WeatherRegistration('Toronto', 123456, 'Canada', 1))
 
 # commit the changes
 db.session.commit()

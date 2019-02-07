@@ -2,10 +2,11 @@ import datetime
 import json
 import pytz
 import urllib.request
-from flask import render_template, redirect, url_for, request, session, flash, Blueprint
-from flask_login import login_required
-from project import app
-from flask_login import current_user
+from flask import render_template, request, flash, Blueprint, redirect, url_for
+from flask_login import login_required, current_user
+from project import app, db
+from project.models import WeatherRegistration
+from .forms import WeatherRegistrationForm
 
 main_blueprint = Blueprint(
     'main', __name__,
@@ -42,41 +43,56 @@ def home():
     :return: rendered template
     '''
 
-    # session.clear()
-    # registrations = db.session.query(WeatherRegistration).all()
-    # print(registrations)
-
-    if 'city_ids' not in session:
-        session['city_ids'] = []
+    weatherRegistrations = db.session.query(WeatherRegistration).filter_by(user_id=current_user.id).all()
 
     with urllib.request.urlopen('http://localhost:5050/countries') as url:
         data = json.loads(url.read().decode())
 
-        error = None
-        if request.method == 'POST':
-            if request.form['city'] != '':
+    error = None
+    form = WeatherRegistrationForm(request.form)
+    form.country.choices = [(c, c) for c in data['data']]  # dyanmically produce countries
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            if form.city.data != '':
                 with urllib.request.urlopen(
-                        'http://localhost:5050/' + request.form['country'].upper() + '/' + request.form[
-                            'city'].capitalize()) as url:
+                        'http://localhost:5050/' + form.country.data.upper() + '/' + form.city.data.capitalize()) as url:
                     ids = json.loads(url.read().decode())
 
                 if not ids['data']:
-                    error = 'No data exists for ' + request.form['city'].capitalize() + '!'
-                    return render_template('index.html', countries=data['data'], error=error, user=current_user.username)
+                    error = 'No data exists for ' + form.city.data.capitalize() + '!'
+                    return render_template('index.html', form=form, error=error, user=current_user, weatherRegistrations=weatherRegistrations)
                 else:
-                    city_ids = session['city_ids']
-
-                    if any(ids['data'][0]['id'] in c for c in city_ids):
-                        flash('City has already been registered')
+                    if any(ids['data'][0]['id'] == wr.city_id for wr in weatherRegistrations):
+                        error = form.city.data.capitalize() + ' has already been registered.'
+                        return render_template('index.html', form=form, error=error, user=current_user,
+                                               weatherRegistrations=weatherRegistrations)
                     else:
-                        city_ids.append([request.form['city'], ids['data'][0]['id']])
-                    session['city_ids'] = city_ids
+                        new_weatherregistration = WeatherRegistration(form.city.data, ids['data'][0]['id'],
+                                                                      form.country.data, current_user.id)
+                        db.session.add(new_weatherregistration)
 
-                    return redirect(url_for('main.home'))
+                        failed = False
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            db.session.rollback()
+                            db.session.flush()
+                            failed = True
+                            print(e)
+
+                        if failed:
+                            error = 'Error with registration.'
+                            return render_template('index.html', form=form, error=error, user=current_user,
+                                                   weatherRegistrations=weatherRegistrations)
+                        else:
+                            flash(form.city.data.capitalize() + ' was registered successfully.')
+                            return redirect(url_for('main.home'))
             else:
                 error = 'Enter a city name!'
 
-    return render_template('index.html', countries=data['data'], error=error, user=current_user.username)
+    return render_template('index.html', form=form, error=error, user=current_user,
+                           weatherRegistrations=weatherRegistrations)
 
 
 @main_blueprint.route('/forecast<id>')
@@ -106,19 +122,28 @@ def remove(id):
     :return: rendered template
     '''
 
-    for c in session['city_ids']:
-        if int(id) == c[1]:
-            session['city_ids'].remove(c)
-            session.modified = True
+    with urllib.request.urlopen('http://localhost:5050/countries') as url:
+        data = json.loads(url.read().decode())
 
-    return redirect(url_for('main.home'))
+    form = WeatherRegistrationForm(request.form)
+    form.country.choices = [(c, c) for c in data['data']]  # dyanmically produce countries
 
+    db.session.query(WeatherRegistration).filter_by(id=id).delete()
 
-@main_blueprint.route('/welcome')
-def welcome():
-    '''
-    Generic welcome page.
+    failed = False
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        db.session.flush()
+        failed = True
+        print(e)
 
-    :return: rendered template
-    '''
-    return render_template('welcome.html')
+    if failed:
+        error = 'Could not remove registration.'
+        weatherRegistrations = db.session.query(WeatherRegistration).filter_by(user_id=current_user.id).all()
+        return render_template('index.html', form=form, error=error, user=current_user,
+                               weatherRegistrations=weatherRegistrations)
+    else:
+        flash('Registration was removed successfully.')
+        return redirect(url_for('main.home'))

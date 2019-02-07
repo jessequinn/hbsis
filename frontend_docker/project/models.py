@@ -8,17 +8,19 @@ class WeatherRegistration(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String, nullable=False)
+    city_id = db.Column(db.Integer, nullable=False)
     country = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, ForeignKey('users.id'))
 
-    def __init__(self, id, city, country, user_id):
-        self.id = id
+    def __init__(self, city, city_id, country, user_id):
         self.city = city
+        self.city_id = city_id
         self.country = country
         self.user_id = user_id
 
     def __repr__(self):
-        return '{} - {} - {}'.format(self.id, self.city, self.user)
+        # return '{} - {} - {} - {} - {}'.format(self.id, self.city, self.city_id, self.country, self.user_id)
+        return '{} - {}'.format(self.city_id, self.user_id)
 
 
 class User(db.Model):

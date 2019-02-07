@@ -2,7 +2,6 @@
 {% block content %}
 <h1>5 Day Forecast</h1>
 <h4>City Name | {{ data['city']['name'] }}</h4>
-<p>Remove city from <a href="/remove{{ data['city']['id'] }}">registration</a><p>
 <hr>
 {% for d in data['list'] %}
 <div class="container">
