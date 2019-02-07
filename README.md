@@ -5,6 +5,7 @@
 The following web application consists of two backends (one api and another postgresql server) and the frontend. Both the api and frontend 
 are programmed around Flask and python. 
 
+A user registration has been created to allow individial sessions to be stored. Users can add or remove city forecast registrations and view upto 5 days of forecasts.
 
 Backend 1:
 
