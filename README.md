@@ -7,6 +7,8 @@ are programmed around Flask and python.
 
 A user registration has been created to allow individial sessions to be stored. Users can add or remove city forecast registrations and view upto 5 days of forecasts.
 
+![](mockup.png)
+
 Backend 1:
 
 Flask serving sqlite based cities. (make_sqlite_db.py) converts city.list.json from openweathermap.org to sqlite.
