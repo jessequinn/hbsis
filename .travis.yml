@@ -1,7 +1,6 @@
 language: python
 env:
-  - APP_MODE="config.TestConfig"
-  - DATABASE_URI="N/A"
+  - APP_MODE="config.TestConfig" DATABASE_URI="N/A"
 python:
   - "3.6"
 # command to install dependencies and run tests
