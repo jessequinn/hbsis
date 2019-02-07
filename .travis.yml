@@ -12,5 +12,5 @@ before_install:
   - docker run -dp 5432:5432 postgresdocker
 script:
   - cd ..; pip install -r requirements.txt
-  - cd backend_docker; python app.py &
+  - cd backend_docker; python app.py >> log.txt 2>&1 &
   - cd ../frontend_docker; python manage.py test
