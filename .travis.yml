@@ -3,17 +3,28 @@ env:
   - APP_MODE="config.TestConfig" DATABASE_URI='postgresql://docker:docker@localhost/openweather'
 python:
   - "3.6"
-jobs:
-  include:
-    - stage: run api in background and install requirements
-      script:
-      - pip install -r requirements.txt
-      - python backend_docker/app.py &
-    - stage: run postgresql server (docker)
-      script:
-      - cd backend2_docker
-      - docker build -t postgresdocker .
-      - docker run -dp 5432:5432 postgresdocker
-    - stage: run tests
-      script:
-      - python frontend_docker/manage.py test
+services:
+  - docker
+before_install:
+  - cd backend2_docker
+  - docker build -t postgresdocker .
+  - docker run -dp 5432:5432 postgresdocker
+  - cd ..
+script:
+  - pip install -r requirements.txt
+  - python backend_docker/app.py &
+  - python frontend_docker/manage.py test
+
+#  include:
+#    - stage: run api in background and install requirements
+#      script:
+#      - pip install -r requirements.txt
+#      - python backend_docker/app.py &
+#    - stage: run postgresql server (docker)
+#      script:
+#      - cd backend2_docker
+#      - docker build -t postgresdocker .
+#      - docker run -dp 5432:5432 postgresdocker
+#    - stage: run tests
+#      script:
+#      - python frontend_docker/manage.py test
