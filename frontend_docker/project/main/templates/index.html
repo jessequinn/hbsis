@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome to the OpenWeatherMap Interface</h1>
+<h4>Hello {{ user.username }}</h4>
+<p>Please enter a city and select a country acronym to register a 5 day forecast.</p>
+<form class="form-weatherregistration" action="" method="post" role="form">
+    {{ form.csrf_token }}
+    <div class="form-group">
+        <label for="cityID">City Name</label>
+        {{ form.city(placeholder="enter city name ...", class="form-control", id="cityID") }}
+        <span class="error">
+        {% if form.city.errors %}
+            {% for error in form.username.errors %}
+                {{ error }}
+            {% endfor %}
+        {% endif %}
+        </span>
+    </div>
+    <div class="form-group">
+        <label for="countryID">Select Country Abbreviation</label>
+        {{ form.country(class="form-control", id="countryID") }}
+        <span class="error">
+        {% if form.country.errors %}
+            {% for error in form.username.errors %}
+                {{ error }}
+            {% endfor %}
+        {% endif %}
+        </span>
+    </div>
+    <button type="submit" class="btn btn-dark btn-sm btn-block" value="Search">Search City</button>
+</form>
+<br>
+<hr>
+<ul class="list-group">
+    {% for wr in weatherRegistrations %}
+    <li class="list-group-item">
+        <a href="/forecast{{ wr.city_id }}">{{ wr.city | capitalize }}</a>
+        | Remove city from <a href="/remove{{ wr.id }}">registration</a>
+    </li>
+    {% endfor %}
+</ul>
+<br>
+<p>Click <a href="/logout">here</a> to logout.</p>
+{% endblock %}
