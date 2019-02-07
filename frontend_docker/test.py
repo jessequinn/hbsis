@@ -1,9 +1,30 @@
 import unittest
-
-from project import app
+from flask_testing import TestCase
+from project import app, db
 from project.main.views import datetimefilter
+from project.models import User, WeatherRegistration
 
-class TestFrontend(unittest.TestCase):
+
+class BaseTestCase(TestCase):
+    '''
+    Backend setup and destruction.
+    '''
+    def create_app(self):
+        app.config.from_object('config.TestConfig')
+        return app
+
+    def setUp(self):
+        db.create_all()
+        db.session.add(User('test', 'test'))
+        db.session.add(WeatherRegistration(1234, 'Toronto', 'Canada', 1))
+        db.session.commit()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+
+class TestFrontend(BaseTestCase):
 
     def test_login_page_response_code(self):
         '''
@@ -11,8 +32,7 @@ class TestFrontend(unittest.TestCase):
 
         :return:
         '''
-        tester = app.test_client(self)
-        response = tester.get('/login', content_type='html/text')
+        response = self.client.get('/login', content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
     def test_login_page_response(self):
@@ -21,8 +41,7 @@ class TestFrontend(unittest.TestCase):
 
         :return:
         '''
-        tester = app.test_client(self)
-        response = tester.get('/login', content_type='html/text')
+        response = self.client.get('/login', content_type='html/text')
         self.assertTrue(b'Please login' in response.data)
 
     def test_correct_login(self):
@@ -31,10 +50,9 @@ class TestFrontend(unittest.TestCase):
 
         :return:
         '''
-        tester = app.test_client(self)
-        response = tester.post(
+        response = self.client.post(
             '/login',
-            data=dict(username='admin', password='admin'),
+            data=dict(username='test', password='test'),
             follow_redirects=True)
         self.assertIn(b'You are logged in', response.data)
 
@@ -44,12 +62,11 @@ class TestFrontend(unittest.TestCase):
 
         :return:
         '''
-        tester = app.test_client(self)
-        response = tester.post(
+        response = self.client.post(
             '/login',
             data=dict(username='incorrect', password='incorrect'),
             follow_redirects=True)
-        self.assertIn(b'Invalid Credentials', response.data)
+        self.assertIn(b'Invalid log in credentials', response.data)
 
     def test_logout(self):
         '''
@@ -57,12 +74,11 @@ class TestFrontend(unittest.TestCase):
 
         :return:
         '''
-        tester = app.test_client(self)
-        response = tester.post(
+        response = self.client.post(
             '/login',
-            data=dict(username='admin', password='admin'),
+            data=dict(username='test', password='test'),
             follow_redirects=True)
-        response = tester.get('/logout', follow_redirects=True)
+        response = self.client.get('/logout', follow_redirects=True)
         self.assertIn(b'You were logged out', response.data)
 
     def test_main_route_requires_login(self):
@@ -71,8 +87,7 @@ class TestFrontend(unittest.TestCase):
 
         :return:
         '''
-        tester = app.test_client(self)
-        response = tester.get('/', follow_redirects=True)
+        response = self.client.get('/', follow_redirects=True)
         self.assertTrue(b'Please login' in response.data)
 
     def test_datetimefilter(self):
@@ -86,8 +101,7 @@ class TestFrontend(unittest.TestCase):
         self.assertEqual(date, 'Wednesday')
 
     def test_city_registration(self):
-        tester = app.test_client(self)
-        response = tester.post(
+        response = self.client.post(
             '/login',
             data=dict(username='admin', password='admin'),
             follow_redirects=True)

@@ -1,6 +1,5 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
-
 from project import db, bcrypt
 
 
@@ -27,7 +26,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False)
-    password = db.Column(db.String)
+    password = db.Column(db.Binary(60), nullable=False)
     registrations = relationship("WeatherRegistration", backref="user")
 
     def __init__(self, username, password):
@@ -36,3 +35,15 @@ class User(db.Model):
 
     def __repr__(self):
         return '{}'.format(self.username)
+
+    def is_authenticated(self):
+            return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return str(self.id)

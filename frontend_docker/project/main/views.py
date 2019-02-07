@@ -3,9 +3,8 @@ import json
 import pytz
 import urllib.request
 from flask import render_template, redirect, url_for, request, session, flash, Blueprint
-from functools import wraps
-from project import app, db
-from project.models import WeatherRegistration
+from flask_login import login_required
+from project import app
 
 main_blueprint = Blueprint(
     'main', __name__,
@@ -31,25 +30,6 @@ def datetimefilter(value, format="%A"):
 
 
 app.jinja_env.filters['datetimefilter'] = datetimefilter
-
-
-def login_required(f):
-    '''
-    Wrapper for login
-
-    :param f: function to wrap
-    :return: wrap object
-    '''
-
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            flash('You need to login first.')
-            return redirect(url_for('users.login'))
-
-    return wrap
 
 
 @main_blueprint.route('/', methods=['GET', 'POST'])

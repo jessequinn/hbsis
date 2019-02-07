@@ -1,5 +1,7 @@
-from flask import flash, redirect, render_template, request, session, url_for, Blueprint
-from functools import wraps
+from flask import flash, redirect, render_template, request, url_for, Blueprint
+from flask_login import login_user, logout_user, login_required
+from project.users.forms import LoginForm
+from project.models import User, bcrypt
 
 users_blueprint = Blueprint(
     'users', __name__,
@@ -7,34 +9,25 @@ users_blueprint = Blueprint(
 )
 
 
-def login_required(test):
-    @wraps(test)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return test(*args, **kwargs)
-        else:
-            flash('You need to login first.')
-            return redirect(url_for('users.login'))
-
-    return wrap
-
-
 @users_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
+    form = LoginForm(request.form)
     if request.method == 'POST':
-        if (request.form['username'] != 'admin') or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.'
-        else:
-            session['logged_in'] = True
-            flash('You are logged in.')
-            return redirect(url_for('main.home'))
-    return render_template('login.html', error=error)
+        if form.validate_on_submit():
+            user = User.query.filter_by(username=request.form['username']).first()
+            if user is not None and bcrypt.check_password_hash(user.password, request.form['password']):
+                login_user(user)
+                flash('You are logged in.')
+                return redirect(url_for('main.home'))
+            else:
+                error = 'Invalid log in credentials. Please try again.'
+    return render_template('login.html', form=form, error=error)
 
 
 @users_blueprint.route('/logout')
 @login_required
 def logout():
-    session.pop('logged_in', None)
+    logout_user()
     flash('You were logged out.')
     return redirect(url_for('main.welcome'))
