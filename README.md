@@ -42,12 +42,25 @@ Set the os environment variables and run the frontend from `frontend_docker` fol
 ```bash
 export APP_MODE='config.DevelopmentConfig'
 export DATABASE_URI='postgresql://docker:docker@localhost/openweather'
+```
+Run initially to prepare postgres db
+```bash
+# prepare db
+python manage.py db init
+python manage.py db migrate
+python manage.py db upgrade
+```
+
+Run the frontend
+```bash
 python manage.py runserver
 ```
 
 to run tests
 ```bash
-export APP_MODE='config.DevelopmentConfig'
+export APP_MODE='config.TestConfig'
 export DATABASE_URI='postgresql://docker:docker@localhost/openweather'
 python manage.py test
 ```
+
+If there is a problem, please do not hestisitate in contacting me.
