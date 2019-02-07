@@ -1,12 +1,12 @@
 import unittest
 from flask_login import current_user
-from project import bcrypt
 from project.models import User, WeatherRegistration
 
 from base import BaseTestCase
+from project import bcrypt
 
 
-class RegistrationTest(BaseTestCase):
+class UserRegistrationTest(BaseTestCase):
     '''
     Validate user registration
 
@@ -46,6 +46,8 @@ class RegistrationTest(BaseTestCase):
         self.assertTrue(bcrypt.check_password_hash(user.password, 'testuser'))
         self.assertFalse(bcrypt.check_password_hash(user.password, 'incorrect'))
 
+
+class WeatherRegistrationTest(BaseTestCase):
     def test_city_id(self):
         '''
         Validate correct city id.
