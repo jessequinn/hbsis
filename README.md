@@ -5,7 +5,21 @@
 The following web application consists of two backends (one api and another postgresql server) and the frontend. Both the api and frontend 
 are programmed around Flask and python. 
 
+The API backend contains the city, country and city id information for calling forecasts from OpenWeatherMap.org
+
+The postgresql server contains user information and storage of city id.
+
 A user registration has been created to allow individial sessions to be stored. Users can add or remove city forecast registrations and view upto 5 days of forecasts.
+
+---
+O seguinte aplicativo da web consiste em dois back-ends (uma api e outro servidor postgresql) e o front-end. Tanto a API como o frontend
+são programados em torno do Flask e python.
+
+O back-end da API contém as informações do código da cidade, país e cidade para chamar as previsões do OpenWeatherMap.org
+
+O servidor postgresql contém informações do usuário e armazenamento do ID da cidade.
+
+Um registro de usuário foi criado para permitir que sessões individuais sejam armazenadas. Os usuários podem adicionar ou remover registros de previsão da cidade e visualizar até cinco dias de previsões.
 
 ![](mockup.png)
 
